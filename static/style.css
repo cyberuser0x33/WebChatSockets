@@ -1,0 +1,170 @@
+:root {
+    --bg-color: #f5f7fa;
+    --header-bg: #4a6ee0;
+    --text-color: #1e1e1e;
+    --msg-left-bg: #e8ecf1;
+    --msg-right-bg: #4a6ee0;
+    --msg-right-color: #fff;
+    --field-bg: #f0f2f5;
+    --border-color: #cbd2dc;
+}
+
+body.dark {
+    --bg-color: #1c1f26;
+    --header-bg: #2b2f3a;
+    --text-color: #e2e4ea;
+    --msg-left-bg: #2f3340;
+    --msg-right-bg: #5865f2;
+    --msg-right-color: #fff;
+    --field-bg: #262a34;
+    --border-color: #3b3f4a;
+}
+
+body{
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Segoe UI Emoji', 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+    transition: background 0.4s color 0.4s;
+}
+
+main{
+    width: 800px;
+    height: 100vh;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+header{
+    background: var(--header-bg);
+    color: beige;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+}
+
+#messages{
+    list-style: none;
+    flex: 1;
+    padding: 15px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+}
+
+#messages li{
+    display: flex;
+    flex-direction: column;
+    max-width: 70%;
+    min-width: 20%;
+    border-radius: 20px;
+    font-size: 17px;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.left{
+    align-self: flex-start;
+    background: var(--msg-left-bg);
+    color-scheme: var(--text-color);
+}
+
+.right{
+    align-self: flex-end;
+    background: var(--msg-right-bg);
+    color: var(--msg-right-color);
+}
+
+.sender{
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    background: var(--header-bg);
+    padding: 5px 10px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    
+}
+
+.content{
+    margin: 0;
+    padding: 5px 10px;
+}
+
+.time{
+    margin: 0;
+    margin-top: 5px;
+    align-self: flex-end;
+    padding: 0 5px 10px;
+
+}
+
+form{
+    display: flex;
+    padding: 10px 15px;
+    border-top: 1px solid var(--border-color);
+    background: var(--field-bg);
+
+}
+
+textarea{
+    flex: 1;
+    padding: 5px 10px;
+    border-radius: 20px;
+    border: none;
+    outline: none;
+    resize: none;
+    font-size: 15px;
+    background: var(--field-bg);
+}
+
+form button{
+    background: none;
+    border: none;
+    padding: 0 10px;
+    cursor: pointer;
+}
+
+button svg{
+    transition: transform 0.2s;
+    background: none;
+}
+
+form button:hover svg{
+    transform: scale(1.1);
+}
+
+form button:active svg{
+    transform: scale(0.9);
+}
+
+.togle-theme{
+    border: none;
+    background: none;
+    cursor: pointer;
+    margin-right: 10px;
+    font-size: 20px;
+}
+
+.exit{
+    border: 1px solid var(--border-color);
+    background: none;
+    color: var(--text-color);
+    transition: all 0.2s;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 15px;
+}
+
+.exit:hover{
+    transform: scale(1.1);
+    background: var(--field-bg);
+}
