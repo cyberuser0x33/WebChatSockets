@@ -20,7 +20,7 @@ body.dark {
     --border-color: #3b3f4a;
 }
 
-body{
+body {
     background: var(--bg-color);
     color: var(--text-color);
     font-family: 'Segoe UI Emoji', 'Segoe UI', sans-serif;
@@ -28,10 +28,10 @@ body{
     padding: 0;
     height: 100vh;
     overflow: hidden;
-    transition: background 0.4s color 0.4s;
+    transition: background 0.4s, color 0.4s;
 }
 
-main{
+main {
     width: 800px;
     height: 100vh;
     margin: 0 auto;
@@ -39,17 +39,16 @@ main{
     flex-direction: column;
 }
 
-header{
+header {
     background: var(--header-bg);
     color: beige;
     padding: 10px 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-
 }
 
-#messages{
+#messages {
     list-style: none;
     flex: 1;
     padding: 15px;
@@ -60,62 +59,87 @@ header{
     overflow-y: auto;
 }
 
-#messages li{
+#messages li {
     display: flex;
     flex-direction: column;
     max-width: 70%;
-    min-width: 20%;
+    min-width: 200px;
     border-radius: 20px;
     font-size: 17px;
     word-wrap: break-word;
     white-space: pre-wrap;
+    padding: 0 10px;
 }
 
-.left{
+.left {
+    flex-direction: row !important;
     align-self: flex-start;
     background: var(--msg-left-bg);
-    color-scheme: var(--text-color);
+    color: var(--text-color);
 }
 
-.right{
+.right {
     align-self: flex-end;
     background: var(--msg-right-bg);
     color: var(--msg-right-color);
 }
 
-.sender{
+.avatar {
+    width: 50px;
+    height: 50px;
+    background: var(--header-bg);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    color: white;
+    text-transform: capitalize;
+    align-self: center;
+
+}
+
+.message {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin-left: 10px;
+
+}
+
+.sender {
     font-size: 14px;
     font-weight: bold;
     margin-bottom: 5px;
-    background: var(--header-bg);
     padding: 5px 10px;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-    
+    text-transform: capitalize;
+
+
 }
 
-.content{
+.content {
     margin: 0;
     padding: 5px 10px;
 }
 
-.time{
+.time {
     margin: 0;
     margin-top: 5px;
     align-self: flex-end;
-    padding: 0 5px 10px;
+    padding: 0 10px 5px;
 
 }
 
-form{
+form {
     display: flex;
     padding: 10px 15px;
     border-top: 1px solid var(--border-color);
     background: var(--field-bg);
+    
 
 }
 
-textarea{
+textarea {
     flex: 1;
     padding: 5px 10px;
     border-radius: 20px;
@@ -124,29 +148,31 @@ textarea{
     resize: none;
     font-size: 15px;
     background: var(--field-bg);
+
 }
 
-form button{
+form button {
     background: none;
     border: none;
     padding: 0 10px;
     cursor: pointer;
 }
 
-button svg{
+button svg {
     transition: transform 0.2s;
-    background: none;
 }
 
-form button:hover svg{
+form button:hover svg {
     transform: scale(1.1);
 }
 
-form button:active svg{
+form button:active svg {
     transform: scale(0.9);
+
+
 }
 
-.togle-theme{
+.toggle-theme {
     border: none;
     background: none;
     cursor: pointer;
@@ -154,7 +180,7 @@ form button:active svg{
     font-size: 20px;
 }
 
-.exit{
+.exit {
     border: 1px solid var(--border-color);
     background: none;
     color: var(--text-color);
@@ -164,7 +190,20 @@ form button:active svg{
     border-radius: 15px;
 }
 
-.exit:hover{
+.exit:hover {
     transform: scale(1.1);
     background: var(--field-bg);
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(90deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+button.sending svg {
+    animation: spin 1s linear infinite;
 }
