@@ -1,124 +1,127 @@
-const http = require("http");
-const fs = require("fs");
-const path = require("path");
-const db = require("./database");
-const cookie = require("cookie");
-const { Server } = require("socket.io");
+let http = require("http");
+let fs = require("fs");
+let path = require("path");
+let db = require("./database");
+let cookie = require("cookie");
 
-const indexHtmlFile = fs.readFileSync(path.join(__dirname, "static", "index.html"));
-const styleFile = fs.readFileSync(path.join(__dirname, "static", "style.css"));
-const scriptFile = fs.readFileSync(path.join(__dirname, "static", "script.js"));
-const authHtmlFile = fs.readFileSync(path.join(__dirname, "static", "auth.html"));
-const authJsFile = fs.readFileSync(path.join(__dirname, "static", "auth.js"));
+let indexHtmlFile = fs.readFileSync(path.join(__dirname, "static", "index.html"));
+let styleFile = fs.readFileSync(path.join(__dirname, "static", "style.css"));
+let scriptFile = fs.readFileSync(path.join(__dirname, "static", "script.js"));
+let authHtmlFile = fs.readFileSync(path.join(__dirname, "static", "auth.html"));
+let authJsFile = fs.readFileSync(path.join(__dirname, "static", "auth.js"));
 
-let validateAuthToken = [];
+let validateAuthTokens = [];
 
 const server = http.createServer((req, res) => {
-    if (req.method === "GET") {
+    if (req.method == "GET") {
         switch (req.url) {
             case "/auth": return res.end(authHtmlFile);
             case "/auth.js": return res.end(authJsFile);
             default: return guarded(req, res);
         }
     }
-
-    if (req.method === "POST") {
+    if (req.method == "POST") {
         switch (req.url) {
             case "/api/login": return loginUser(req, res);
             case "/api/register": return registerUser(req, res);
             default: return guarded(req, res);
         }
     }
-});
+})
 
 function registerUser(req, res) {
     let data = "";
-    req.on("data", chunk => data += chunk);
+    req.on("data", chunk => {
+        data += chunk;
+    })
     req.on("end", async () => {
         try {
             const user = JSON.parse(data);
-            if (!user.login || !user.password.trim()) {
+            if (!user.login.trim() || !user.password.trim()) {
                 res.statusCode = 400;
                 return res.end(JSON.stringify({
-                    error: "Error 400 | Empty username or password"
-                }));
+                    "error": "Empty username or password"
+                }))
             }
-
-            if (await db.isUserExists(user.login)) {
+            if (await db.isUserExist(user.login)) {
                 res.statusCode = 400;
                 return res.end(JSON.stringify({
-                    error: "Error 400 | Username already exists"
-                }));
+                    "error": "Username already exists"
+                }))
             }
-
             await db.addUser(user);
             res.statusCode = 201;
-            return res.end(JSON.stringify({ status: "Ok" }));
+            res.end(JSON.stringify({
+                "status": "ok"
+            }))
         } catch (e) {
             res.statusCode = 500;
             return res.end(JSON.stringify({
-                "error": e
-            }));
+                "error": "Some error, try again"
+            }))
         }
-    });
+    })
 }
 
 function loginUser(req, res) {
     let data = "";
-    req.on("data", chunk => data += chunk);
+    req.on("data", chunk => {
+        data += chunk;
+    })
+
     req.on("end", async () => {
         try {
             const user = JSON.parse(data);
             const token = await db.getAuthToken(user);
-            validateAuthToken.push(token);
+            validateAuthTokens.push(token);
             res.statusCode = 200;
-            return res.end(JSON.stringify({ token }));
+            res.end(JSON.stringify({
+                "token": token
+            }))
         } catch (e) {
             res.statusCode = 400;
             return res.end(JSON.stringify({
                 "error": e
-            }));
+            }))
         }
-    });
+    })
 }
 
 function getCredentials(c = "") {
-    let cookies = cookie.parse(c)
+    let cookies = cookie.parse(c);
     let token = cookies?.token;
-    if (!token || !validateAuthToken.includes(token)) return null;
+    if (!token || !validateAuthTokens.includes(token)) return null;
 
     let [userId, login] = token.split(".");
-    return {userId, login};
-
+    return {userId, login}
 }
 
-function guarded (req, res){
+function guarded(req, res) {
     const creds = getCredentials(req.headers?.cookie);
-    if (!creds){
+    if (!creds) {
         res.writeHead(302, {"Location": "/auth"});
         return res.end();
     }
-    if (req.method == "GET"){
-        switch (req.url){
+    if (req.method == "GET") {
+        switch(req.url) {
             case "/": return res.end(indexHtmlFile);
-            case "/style.css": return res.end(styleFile);
             case "/script.js": return res.end(scriptFile);
+            case "/style.css": return res.end(styleFile);
         }
     }
     res.statusCode = 404;
-    return res.end("404");
+    res.end("404");
 }
 
-server.listen(3000, () => {
-    console.log("Server is listening on port 3000");
-});
+server.listen(3000);
 
+const { Server } = require("socket.io");
 const io = new Server(server);
 
 io.use((socket, next) => {
     const cookie = socket.handshake.auth.cookie;
     const creds = getCredentials(cookie);
-    if (!creds) next (new Error ("Not authorized"));
+    if (!creds) next(new Error("no auth"));
     socket.credentials = creds;
     next();
 })
@@ -129,18 +132,17 @@ io.on("connection", async (socket) => {
     let userId = socket.credentials?.userId;
     let messages = await db.getMessages();
     socket.emit("history", messages);
-
     socket.on("new_message", message => {
-        const now = new Date();
-        const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
+        let date = new Date();
+        let hours = String(date.getHours()).padStart(2, "0");
+        let minutes = String(date.getMinutes()).padStart(2, "0");
+        let time = hours + ":" + minutes;
         db.addMessage(message, userId, time);
-
         io.emit("message", JSON.stringify({
-            sender: "Admin",
-            text: message,
-            time: time,
+            "sender": login,
+            "text": message,
+            "time": time,
             "userId": userId
-        }));
-    });
-});
+        }))
+    })
+})

@@ -14,14 +14,14 @@ let c = document.cookie;
 let token = c.split("=")[1];
 let userId = token.split(".")[0];
 let username = token.split(".")[1];
-alertify.log("Welcome," + username);
+alertify.log("Welcome, " + username);
 
 let form = document.querySelector("form");
 let sendBtn = document.querySelector(".send");
 
 form.addEventListener("submit", e => {
     e.preventDefault();
-    if (e.target["msg"].value.trim() == ""){
+    if (e.target["msg"].value.trim() == "") {
         textarea.style.height = "auto";
         e.target["msg"].value = "";
         return
@@ -46,7 +46,6 @@ textarea.addEventListener("input", () => {
     textarea.style.height = textarea.scrollHeight + "px";
 })
 
-
 let messagesDOM = document.querySelector("#messages");
 socket.on("message", msg => {
     let obj = JSON.parse(msg);
@@ -57,8 +56,7 @@ socket.on("message", msg => {
         align = "left";
         let letter = obj.sender.charAt(0);
         avatarDOM = `<div class="avatar">${letter}</div>`;
-        senderDOM = `<span class="sender">${obj.sender}</span>`;
-
+        senderDOM = `<span class="sender">${obj.sender}</span>`
     }
 
     messagesDOM.innerHTML += `
@@ -83,8 +81,7 @@ socket.on("history", msgArray => {
             align = "left";
             let letter = item.author.charAt(0);
             avatarDOM = `<div class="avatar">${letter}</div>`;
-            senderDOM = `<span class="sender">${item.author}</span>`;
-
+            senderDOM = `<span class="sender">${item.author}</span>`
         }
 
         messagesDOM.innerHTML += `
@@ -99,10 +96,9 @@ socket.on("history", msgArray => {
     `;
     })
     messagesDOM.scrollTo(0, messagesDOM.scrollHeight);
-
 })
 
 document.querySelector(".exit").addEventListener("click", () => {
-    document.cookie = "token=; Max-Age=0";
+    document.cookie = "token=;Max-Age=0";
     location.assign("/");
 })
