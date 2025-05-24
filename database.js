@@ -49,7 +49,7 @@ module.exports = {
     getMessages: async () => {
         return await db.all(
             `SELECT m.id AS msg_id, u.id AS user_id, m.content AS msg, u.login AS author, m.datetime
-            FROM massage m JOIN user u ON m.author_id = u.id`
+            FROM message m JOIN user u ON m.author_id = u.id`
         )
     },
     addMessage: async (msg, userId, dt) => {
@@ -72,7 +72,7 @@ module.exports = {
         )
     },
     getAuthToken: async (user) => {
-        let author = await db.all("SELECT * FROM user WHERE login = ?", [user]);
+        let author = await db.all("SELECT * FROM user WHERE login = ?", [user.login]);
         if (!author.length) {
             throw "Incorrect login"
         }

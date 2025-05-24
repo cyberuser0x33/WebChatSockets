@@ -148,6 +148,7 @@ textarea {
     resize: none;
     font-size: 15px;
     background: var(--field-bg);
+    max-height: 150px;
 
 }
 
@@ -207,3 +208,4 @@ form button:active svg {
 button.sending svg {
     animation: spin 1s linear infinite;
 }
+
